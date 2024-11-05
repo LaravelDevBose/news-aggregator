@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: news_aggregator_app
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    depends_on:
+      - mongo
+    ports:
+      - ${PORT}:3000
+    networks:
+      - news_network
+
+  mongo:
+    image: mongo:4.4
+    container_name: news_aggregator_mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - news_network
+
+volumes:
+  mongo_data:
+
+networks:
+  news_network:
+    driver: bridge
